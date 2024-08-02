@@ -5,20 +5,19 @@ import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
-class VideoPlayerUI extends StatefulWidget {
+class PlayerUI extends StatefulWidget {
   final String videoPath;
 
-  const VideoPlayerUI({super.key, required this.videoPath});
+  const PlayerUI({super.key, required this.videoPath});
 
   @override
-  State<VideoPlayerUI> createState() => _VideoPlayerUIState();
+  State<PlayerUI> createState() => _PlayerUIState();
 }
 
-class _VideoPlayerUIState extends State<VideoPlayerUI> {
+class _PlayerUIState extends State<PlayerUI> {
   late Player _player;
   late final controller = VideoController(_player);
   bool showAppbar = true;
-  int seconds = 4;
   Timer? _hideTimer;
   FocusNode focus = FocusNode();
   @override
@@ -33,7 +32,7 @@ class _VideoPlayerUIState extends State<VideoPlayerUI> {
     setState(() {
       showAppbar = true;
     });
-    _hideTimer = Timer(Duration(seconds: seconds), () {
+    _hideTimer = Timer(const Duration(seconds: 3), () {
       if (mounted) {
         setState(() {
           showAppbar = false;

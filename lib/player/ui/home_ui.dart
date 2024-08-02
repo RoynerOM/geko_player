@@ -2,21 +2,19 @@ import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:geko_player/path_videos.dart';
-import 'package:geko_player/video_player.dart';
+import 'package:geko_player/player/helpers/path.dart';
+import 'package:geko_player/player/helpers/file.dart';
+import 'package:geko_player/player/ui/player_ui.dart';
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
-import 'package:process_run/shell_run.dart';
 
-class VideoDirectoryScreen extends StatefulWidget {
-  const VideoDirectoryScreen({super.key});
+class HomeView extends StatefulWidget {
+  const HomeView({super.key});
 
   @override
-  State<VideoDirectoryScreen> createState() => _VideoDirectoryScreenState();
+  State<HomeView> createState() => _HomeViewState();
 }
 
-class _VideoDirectoryScreenState extends State<VideoDirectoryScreen> {
+class _HomeViewState extends State<HomeView> {
   List<FileSystemEntity> _videoFiles = [];
   Map<String, String> _thumbnails = {};
   Directory? _selectedDirectory;
@@ -24,72 +22,26 @@ class _VideoDirectoryScreenState extends State<VideoDirectoryScreen> {
   @override
   void initState() {
     super.initState();
-    _pickDirectory();
+    _init();
   }
 
-  Future<void> _pickDirectory() async {
-    final videoPath = getPathVideos();
-    _selectedDirectory = Directory(videoPath);
+  Future<void> _init() async {
+    _selectedDirectory = Directory(getVideoPath());
     await _loadVideos();
   }
 
   Future<void> _loadVideos() async {
     final futures = <Future<MapEntry<String, String>>>[];
     if (_selectedDirectory == null) return;
-    final videoFiles = await _getVideoFiles(_selectedDirectory!);
+    final videoFiles = await getFiles(_selectedDirectory!);
     for (var file in videoFiles) {
-      futures.add(_getThumbnailPath(file.path).then((thumbnail) {
+      futures.add(getThumbnailPath(file.path).then((thumbnail) {
         return MapEntry(file.path, thumbnail ?? '');
       }));
     }
     final results = await Future.wait(futures);
     _thumbnails = Map<String, String>.fromEntries(results);
     setState(() => _videoFiles = videoFiles);
-  }
-
-  Future<List<FileSystemEntity>> _getVideoFiles(Directory dir) async {
-    final List<FileSystemEntity> videoFiles = [];
-    final entities = await dir.list(recursive: true).toList();
-    for (var entity in entities) {
-      if (entity is File && _isVideoFile(entity)) {
-        videoFiles.add(entity);
-      }
-    }
-    return videoFiles;
-  }
-
-  bool _isVideoFile(File file) {
-    final extensions = ['mp4', 'avi', 'mkv', 'mov'];
-    final ext = path.extension(file.path).replaceFirst('.', '');
-    return extensions.contains(ext.toLowerCase());
-  }
-
-  Future<String?> _getThumbnailPath(String videoPath) async {
-    try {
-      final directory = await getTemporaryDirectory();
-      final ffmpegPath = '${directory.path}/ffmpeg.exe';
-      final byteData = await rootBundle.load('tools/ffmpeg.exe');
-      final buffer = byteData.buffer.asUint8List();
-      final file = File(ffmpegPath);
-      await file.writeAsBytes(buffer);
-      final thumbnailPath =
-          '${directory.path}/${DateTime.now().millisecondsSinceEpoch}.png';
-
-      final shell = Shell();
-      await shell.run('''
-        $ffmpegPath -i "$videoPath" -ss 00:00:01.000 -vframes 1 "$thumbnailPath"
-      ''');
-
-      final thumbnailFile = File(thumbnailPath);
-
-      if (await thumbnailFile.exists()) {
-        return thumbnailFile.path;
-      } else {
-        return null;
-      }
-    } catch (e) {
-      return null;
-    }
   }
 
   @override
@@ -162,7 +114,7 @@ class _VideoDirectoryScreenState extends State<VideoDirectoryScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => VideoPlayerUI(videoPath: videoPath),
+        builder: (context) => PlayerUI(videoPath: videoPath),
       ),
     );
   }
