@@ -1,5 +1,5 @@
 name: geko_player
-description: "A new Flutter project."
+description: "Player Video Application"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -37,6 +37,7 @@ msix_config:
   certificate_path: C:\Users\ropor\Documents\pxf\certificate.pfx
   certificate_password: 651420
   install_certificate: true
+  capabilities: "video"
   msix_version: 1.0.0.0
   store: false
 
