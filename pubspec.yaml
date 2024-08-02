@@ -24,11 +24,12 @@ dev_dependencies:
   msix: ^3.16.7
   flutter_launcher_icons: ^0.13.1
 flutter_launcher_icons:
+#flutter pub run flutter_launcher_icons
   windows:
       generate: true
       image_path: "assets/logo-base.png"
       icon_size: 48
-
+#dart run msix:create
 msix_config:
   display_name: Geko Player
   publisher_display_name: Gekode
