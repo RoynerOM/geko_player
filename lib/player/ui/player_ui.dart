@@ -7,8 +7,8 @@ import 'package:media_kit_video/media_kit_video.dart';
 
 class PlayerUI extends StatefulWidget {
   final String videoPath;
-
-  const PlayerUI({super.key, required this.videoPath});
+  final bool onlyPlayer;
+  const PlayerUI({super.key, required this.videoPath, this.onlyPlayer = false});
 
   @override
   State<PlayerUI> createState() => _PlayerUIState();
@@ -77,7 +77,7 @@ class _PlayerUIState extends State<PlayerUI> {
                   ),
                 ),
               ),
-              if (showAppbar)
+              if (showAppbar && !widget.onlyPlayer)
                 BackButton(
                   color: Colors.white,
                   onPressed: () {

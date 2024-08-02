@@ -12,7 +12,7 @@ class App extends StatelessWidget {
       title: 'Geko Player',
       debugShowCheckedModeBanner: false,
       home: videoPath != null
-          ? PlayerUI(videoPath: videoPath!)
+          ? PlayerUI(videoPath: videoPath!, onlyPlayer: true)
           : const HomeView(),
     );
   }

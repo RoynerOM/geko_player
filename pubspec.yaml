@@ -22,6 +22,12 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^3.0.0
   msix: ^3.16.7
+  flutter_launcher_icons: ^0.13.1
+flutter_launcher_icons:
+  windows:
+      generate: true
+      image_path: "assets/logo-base.png"
+      icon_size: 48
 
 msix_config:
   display_name: Geko Player
@@ -37,3 +43,4 @@ flutter:
   uses-material-design: true
   assets:
     - tools/ffmpeg.exe
+    - assets/logo-base.png
