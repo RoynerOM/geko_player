@@ -1,13 +1,14 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/process_run.dart';
 
-String getVideoPath() {
+Future<String> getVideoPath() async {
   try {
     final result =
-        runExecutableArgumentsSync('cmd', ['/c', 'echo', '%USERPROFILE%']);
+        await runExecutableArguments('cmd', ['/c', 'echo', '%USERPROFILE%']);
     if (result.exitCode == 0) {
       return result.stdout.trim() + '\\Videos';
     } else {
@@ -18,21 +19,18 @@ String getVideoPath() {
   }
 }
 
-Future<String?> getThumbnailPath(String videoPath) async {
+Future<String?> generateThumbnail(String videoPath) async {
   try {
     final directory = await getTemporaryDirectory();
-    final ffmpegPath = '${directory.path}/ffmpeg.exe';
-    final byteData = await rootBundle.load('tools/ffmpeg.exe');
-    final buffer = byteData.buffer.asUint8List();
-    final file = File(ffmpegPath);
-    await file.writeAsBytes(buffer);
+    final ffmpegPath = await _ensureFFmpegExists(directory);
+
     final thumbnailPath =
         '${directory.path}/${DateTime.now().millisecondsSinceEpoch}.png';
 
     final shell = Shell();
     await shell.run('''
-        $ffmpegPath -i "$videoPath" -ss 00:00:01.000 -vframes 1 "$thumbnailPath"
-      ''');
+      $ffmpegPath -i "$videoPath" -ss 00:00:01.000 -vframes 1 "$thumbnailPath"
+    ''');
 
     final thumbnailFile = File(thumbnailPath);
 
@@ -44,4 +42,14 @@ Future<String?> getThumbnailPath(String videoPath) async {
   } catch (e) {
     return null;
   }
+}
+
+Future<String> _ensureFFmpegExists(Directory directory) async {
+  final ffmpegPath = '${directory.path}/ffmpeg.exe';
+  final file = File(ffmpegPath);
+  if (!await file.exists()) {
+    final byteData = await rootBundle.load('tools/ffmpeg.exe');
+    await file.writeAsBytes(byteData.buffer.asUint8List());
+  }
+  return ffmpegPath;
 }

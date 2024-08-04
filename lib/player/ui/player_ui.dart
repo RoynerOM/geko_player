@@ -16,13 +16,16 @@ class PlayerUI extends StatefulWidget {
 
 class _PlayerUIState extends State<PlayerUI> {
   late Player _player;
-  late final controller = VideoController(_player);
+  late VideoController controller;
   bool showAppbar = true;
   Timer? _hideTimer;
   FocusNode focus = FocusNode();
   @override
   void initState() {
-    _player = Player();
+    _player = Player(
+      configuration: const PlayerConfiguration(bufferSize: 1024 * 1024),
+    );
+    controller = VideoController(_player);
     _player.open(Media(widget.videoPath));
     super.initState();
   }
@@ -48,6 +51,7 @@ class _PlayerUIState extends State<PlayerUI> {
     } else {
       _player.play();
     }
+    setState(() {});
   }
 
   @override
@@ -93,7 +97,10 @@ class _PlayerUIState extends State<PlayerUI> {
 
   @override
   void dispose() {
+    controller.player.stop();
     _player.dispose();
+    focus.dispose();
+    _hideTimer?.cancel();
     super.dispose();
   }
 }

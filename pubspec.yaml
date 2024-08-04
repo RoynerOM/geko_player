@@ -33,13 +33,14 @@ flutter_launcher_icons:
 msix_config:
   display_name: Geko Player
   publisher_display_name: Gekode
-  identity_name: gekode.gekoplayer
+  identity_name: 27754Gekode.GekoPlayer
+  publisher: CN=9F927B73-1CF4-4E81-803E-7CD67376D6D2
+  capabilities: "videosLibrary"
   certificate_path: C:\Users\ropor\Documents\pxf\certificate.pfx
   certificate_password: 651420
   install_certificate: true
-  capabilities: "video"
   msix_version: 1.0.0.0
-  store: false
+  store: true
 
 flutter:
   uses-material-design: true
