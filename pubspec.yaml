@@ -36,6 +36,7 @@ msix_config:
   identity_name: 27754Gekode.GekoPlayer
   publisher: CN=9F927B73-1CF4-4E81-803E-7CD67376D6D2
   capabilities: "videosLibrary"
+  logo_path: E:\Proyectos\geko_player\assets\logo44x44.png
   certificate_path: C:\Users\ropor\Documents\pxf\certificate.pfx
   certificate_password: 651420
   install_certificate: true
