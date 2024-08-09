@@ -8,6 +8,7 @@
 
 [Setup]
 AppId={{D2A2F224-5E51-48BB-9A0D-CEA582285208}
+SignTool=signtool $f
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
